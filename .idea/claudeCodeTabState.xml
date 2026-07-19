@@ -10,7 +10,7 @@
               <option name="sessionId" value="9ac8da12-050b-4b6c-87d6-759ed43798dd" />
               <option name="cwd" value="D:\Agent_Learnings\knowledge_base" />
               <option name="model" value="claude-sonnet-4-6[1m]" />
-              <option name="permissionMode" value="default" />
+              <option name="permissionMode" value="bypassPermissions" />
             </TabSessionState>
           </value>
         </entry>
