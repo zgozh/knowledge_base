@@ -172,7 +172,6 @@ class NodeDocumentSplit(BaseNode):
             # 无标题处理
             return [{
                 "title": "无标题",
-                "parent_title": "无标题",
                 "content": content,
                 "file_title": file_title
             }]
@@ -195,6 +194,12 @@ class NodeDocumentSplit(BaseNode):
         # 阶段2：短段落合并，减少内容碎片化
         final_sections = self._merge_short_sections(refined_split)
 
+        # 阶段3：父标题兜底
+        # for section in final_sections:
+        #     #特殊情况:处理
+        #     pass
+        #
+        # return final_sections
         return final_sections
 
     def _split_long_section(self, section: Dict[str, str]) -> List[Dict[str, str]]:
@@ -273,7 +278,7 @@ class NodeDocumentSplit(BaseNode):
 
     def _merge_short_sections(self, sections: List[Dict[str, str]]) -> List[Dict[str, str]]:
 
-        # 边界处理：空列表直接返回
+        # 边界处理：空列表直接范湖
         if not sections:
             return []
 
@@ -339,10 +344,13 @@ class NodeDocumentSplit(BaseNode):
             # 拼接备份文件路径：固定文件名，便于查找
             backup_path = Path(state["md_path"]).parent / "chunks.json"
             # 写入JSON文件：保留中文/格式化缩进，便于人工查看
-            # sections是Python嵌套数据结构，直接f.write()会报错。
-            # json.dump将Python原生数据结构序列化写入JSON文件，
-            # 可跨语言/场景读取，完美适配Chunk列表备份需求。
             with open(backup_path, "w", encoding="utf-8") as f:
+                """
+                sections是Python 嵌套数据结构（List[Dict[str, str]]，列表里装字典，字典里可能嵌套字符串 / 数字等），而普通文件写入
+                （如f.write(sections)）仅支持写入字符串，直接写 Python 数据结构会报错。
+                json.dump的核心作用就是：将 Python 原生数据结构（列表、字典、字符串、数字等）直接序列化并写入 JSON 文件，无需手动转换为字符串，
+                同时保证数据格式规范、可跨语言 / 跨场景读取，完美适配「Chunk 列表备份」的需求。
+                """
                 json.dump(
                     sections,
                     f,
