@@ -194,12 +194,13 @@ class NodeDocumentSplit(BaseNode):
         # 阶段2：短段落合并，减少内容碎片化
         final_sections = self._merge_short_sections(refined_split)
 
-        # 阶段3：父标题兜底
-        # for section in final_sections:
-        #     #特殊情况:处理
-        #     pass
-        #
-        # return final_sections
+        # 阶段3：补全必填字段 — parent_title/part，适配 Milvus schema
+        for section in final_sections:
+            if "parent_title" not in section:
+                section["parent_title"] = section.get("title", "")
+            if "part" not in section:
+                section["part"] = 0
+
         return final_sections
 
     def _split_long_section(self, section: Dict[str, str]) -> List[Dict[str, str]]:

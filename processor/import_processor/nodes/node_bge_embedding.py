@@ -125,4 +125,9 @@ if __name__ == "__main__":
     node_bge_embedding = NodeBGEEmbedding()
     result = node_bge_embedding(init_state)
 
+    # 保存结果供下游 node_import_milvus 测试使用
+    output_path = r"D:\Agent_Learnings\LangGraph\output\hak180产品安全手册\state_vector.json"
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=4)
+
     logging.getLogger().info(json.dumps(result, ensure_ascii=False, indent=4))
