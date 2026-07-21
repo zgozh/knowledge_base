@@ -7,10 +7,10 @@
           <value>
             <TabSessionState>
               <option name="provider" value="claude" />
-              <option name="sessionId" value="b8e28a6e-9aa5-4814-adcb-a137bc56934e" />
+              <option name="sessionId" value="eedbb837-81ba-40c5-b057-63a951530137" />
               <option name="cwd" value="D:\Agent_Learnings\knowledge_base" />
-              <option name="model" value="claude-sonnet-4-6[1m]" />
-              <option name="permissionMode" value="bypassPermissions" />
+              <option name="model" value="claude-opus-4-8[1m]" />
+              <option name="permissionMode" value="default" />
             </TabSessionState>
           </value>
         </entry>
