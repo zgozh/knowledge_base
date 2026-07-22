@@ -8,6 +8,7 @@ from processor.query_processor.base import NodeBase
 from processor.query_processor.state import QueryGraphState
 from tool.logger import logger
 from utils.json_format_utils import serialize_json
+from utils.task_utils import add_done_task
 
 
 class NodeWebSearchMcp(NodeBase):
@@ -39,6 +40,7 @@ class NodeWebSearchMcp(NodeBase):
 
                 logger.info("MCP 搜索结果:", docs)
 
+        add_done_task(state.get("session_id"), self.name, state.get("is_stream"))
         if docs:
             return {"web_search_docs": docs}
         return {}

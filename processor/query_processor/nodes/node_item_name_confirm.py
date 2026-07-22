@@ -14,6 +14,7 @@ from tool.logger import logger
 from utils.embedding_utils import generate_embeddings
 from utils.milvus_utils import get_milvus_client, create_hybrid_search_requests, hybrid_search
 from utils.mongo_history_utils import get_recent_messages, save_chat_message, update_message_item_names
+from utils.task_utils import add_done_task
 
 
 class NodeItemNameConfirm(NodeBase):
@@ -68,6 +69,8 @@ class NodeItemNameConfirm(NodeBase):
 
         # 8. 写入最终历史
         self._step_8_write_history(state, session_id, rewritten_query, message_id)
+
+        add_done_task(state.get("session_id"), self.name, state.get("is_stream"))
         return state
 
     def _step_1_validate_param(self, state: QueryGraphState) -> Tuple[str, str]:

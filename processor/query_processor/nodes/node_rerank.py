@@ -5,6 +5,7 @@ from processor.query_processor.state import QueryGraphState
 from tool.logger import logger
 from utils.json_format_utils import serialize_json
 from utils.reranker_http_utils import rerank_documents
+from utils.task_utils import add_done_task
 
 # -----------------------------
 # Rerank / TopK 全局常量
@@ -49,6 +50,7 @@ class NodeRerank(NodeBase):
         state['reranked_docs'] = cutoff_docs
 
         # 5. 返回state
+        add_done_task(state.get("session_id"), self.name, state.get("is_stream"))
         return state
 
     def _step_1_merge_multi_source_docs(self, state: QueryGraphState) -> List[Dict[str, Any]]:

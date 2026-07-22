@@ -7,6 +7,7 @@ from utils.embedding_utils import generate_embeddings
 from utils.json_format_utils import serialize_json
 from utils.llm_utils import get_llm_client
 from utils.milvus_utils import create_hybrid_search_requests, get_milvus_client, hybrid_search
+from utils.task_utils import add_done_task
 
 
 class NodeSearchEmbeddingHyde(NodeBase):
@@ -52,6 +53,7 @@ class NodeSearchEmbeddingHyde(NodeBase):
             )
 
             # 4、结果封装
+            add_done_task(state.get("session_id"), self.name, state.get("is_stream"))
             return {
                 "hyde_embedding_chunks": res,
                 "hyde_doc": hyde_doc,

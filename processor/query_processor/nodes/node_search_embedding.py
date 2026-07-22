@@ -7,6 +7,7 @@ from tool.logger import logger
 from utils.embedding_utils import generate_embeddings
 from utils.json_format_utils import serialize_json
 from utils.milvus_utils import create_hybrid_search_requests, hybrid_search, get_milvus_client
+from utils.task_utils import add_done_task
 
 
 class NodeSearchEmbedding(NodeBase):
@@ -79,6 +80,7 @@ class NodeSearchEmbedding(NodeBase):
              )
 
              # 7、构造并返回结果：若检索结果非空，取res[0]，否则返回空列表
+             add_done_task(state.get("session_id"), self.name, state.get("is_stream"))
              return {"embedding_chunks": res[0] if res else []}
 
          except Exception as e:
