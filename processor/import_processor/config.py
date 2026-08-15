@@ -51,9 +51,6 @@ class ImportConfig:
     item_model: str = field(
         default_factory=lambda: os.getenv("ITEM_MODEL", "")
     )
-    default_model: str = field(
-        default_factory=lambda: os.getenv("MODEL", "")
-    )
 
     # ==================== Milvus 配置 ====================
     milvus_url: str = field(

@@ -26,7 +26,7 @@ env/
 *.swo
 
 # ==================== 运行时 / 生成物 ====================
-# 上传/解析产生的临时文件目录（对应 .env 中 MD_ROOT_DIR=./temp-files/）
+# 上传/解析产生的临时文件目录
 temp-files/
 # RAGAS 评测生成的评分结果文件（由 eval/evaluate_ragas.py 生成，可随时重跑）
 eval/qa_result.csv
