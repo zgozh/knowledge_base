@@ -1,1 +1,39 @@
+# ==================== 密钥 / 环境变量 ====================
+# 真实密钥绝不入库；.env.example 作为模板保留
 .env
+.env.*
+!.env.example
+
+# ==================== Python ====================
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ==================== IDE / 编辑器 ====================
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ==================== 运行时 / 生成物 ====================
+# 上传/解析产生的临时文件目录（对应 .env 中 MD_ROOT_DIR=./temp-files/）
+temp-files/
+# RAGAS 评测生成的评分结果文件（由 eval/evaluate_ragas.py 生成，可随时重跑）
+eval/qa_result.csv
+# 本地评测工具目录
+.jbeval/
+# 日志
+*.log
+
+# 本地下载/缓存的模型（若把模型缓存指到项目内，一并忽略）
+models/
