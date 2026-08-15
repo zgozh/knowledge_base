@@ -75,12 +75,10 @@ def run_graph_task(task_id: str, file_dir: str, import_file_path: str):
             "import_file_path": import_file_path,
         }
 
-        # 3. 流式执行LangGraph全流程（stream模式：实时获取每个节点的执行结果）
+        # 3. 流式执行LangGraph全流程（节点进度已由 BaseNode.__call__ 以正确节点名记录）
         workflow = KBImportWorkflow()
-        for event in workflow.run(init_state, stream=True):
-            for node_name, node_result in event.items():
-                # 将完成的节点名加入【已完成列表】，前端轮询/status/{task_id}可实时获取
-                add_done_task(task_id, node_name)
+        for _ in workflow.run(init_state, stream=True):
+            pass
 
         # 4. 全流程执行完成，更新任务全局状态为：已完成
         update_task_status(task_id, "completed")

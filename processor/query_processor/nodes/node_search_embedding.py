@@ -1,5 +1,3 @@
-from ir_datasets.datasets.antique import collection
-
 from config.milvus_config import milvus_config
 from processor.query_processor.base import NodeBase, T
 from processor.query_processor.state import QueryGraphState

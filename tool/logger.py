@@ -27,3 +27,10 @@ handler.setFormatter(colorlog.ColoredFormatter(
 
 # 应用日志配置信息
 logger.addHandler(handler)
+
+# 降噪：第三方库的 DEBUG/INFO 日志过于嘈杂，统一提升到 WARNING
+for _noisy_logger in (
+    "pymongo", "openai", "httpx", "httpcore", "urllib3",
+    "minio", "FlagEmbedding", "transformers", "modelscope",
+):
+    logging.getLogger(_noisy_logger).setLevel(logging.WARNING)
