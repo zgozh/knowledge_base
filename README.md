@@ -158,6 +158,37 @@ knowledge_base/
 
 ---
 
+## 部署
+
+### 外部依赖（Docker 一键启动）
+
+仓库根目录提供 `docker-compose.yml`，一键拉起 Milvus（含 etcd + minio）、MongoDB、MinIO 三件外部依赖：
+
+```bash
+docker compose up -d
+```
+
+| 服务 | 端口 | 说明 |
+|---|---|---|
+| Milvus | 19530 / 9091 | 向量库（standalone 模式，内部依赖 etcd + minio） |
+| MinIO | 9000 / 9001 | 对象存储（兼作 Milvus 段存储 + 应用图片/文件存储） |
+| MongoDB | 27017 | 会话历史 |
+
+- 数据持久化在 `./volumes/`（已加入 `.gitignore`）。
+- 默认账号 `minioadmin` / `minioadmin`，与 `.env.example` 一致；应用启动时会自动创建 `knowledge-base` 桶并设置公共读策略。
+- 停止：`docker compose down`（`-v` 才会删除数据卷）。
+
+### 应用本体
+
+两个 FastAPI 服务在宿主机运行（需 GPU / CUDA），启动方式见下方「快速开始」：
+
+```bash
+uv run python -m web.api.import_service   # 导入服务（端口 8000）
+uv run python -m web.api.query_service    # 查询服务（端口 8001）
+```
+
+---
+
 ## 快速开始
 
 ### 1. 安装依赖
@@ -188,7 +219,9 @@ uv run python -c "from modelscope import snapshot_download; snapshot_download('B
 
 ### 4. 启动外部服务
 
-确保 Milvus、MongoDB、MinIO 已启动（可用 Docker 自行编排）。
+```bash
+docker compose up -d   # 一键启动 Milvus / MongoDB / MinIO（详见「部署」）
+```
 
 ### 5. 启动应用（两个服务分别起）
 

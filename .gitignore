@@ -34,6 +34,8 @@ eval/qa_result.csv
 .jbeval/
 # 日志
 *.log
+# Docker 外部依赖数据卷（docker compose 生成）
+volumes/
 
 # 本地下载/缓存的模型（若把模型缓存指到项目内，一并忽略）
 models/

@@ -1,0 +1,86 @@
+# 掌柜智库 · 外部依赖编排（应用本体仍在宿主机运行）
+#
+# 一键启动：docker compose up -d
+# 停止（保留数据）：docker compose stop
+# 停止并清理容器（保留数据卷）：docker compose down
+# 数据持久化在 ./volumes/ 目录下（已加入 .gitignore）
+#
+# 说明：
+#   - Milvus standalone 依赖 etcd（元数据）与 minio（段存储）；
+#   - 该 minio 同时兼作应用的对象存储（图片/文件），账号密码 minioadmin/minioadmin，
+#     端口 9000/9001，与 .env.example 中的 MINIO_* 配置一致，应用启动时会自动创建
+#     knowledge-base 桶并设置公共读策略；
+#   - MongoDB 用于会话历史。
+
+services:
+  etcd:
+    container_name: milvus-etcd
+    image: quay.io/coreos/etcd:v3.5.18
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - ./volumes/etcd:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  minio:
+    container_name: milvus-minio
+    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    ports:
+      - "9001:9001"   # MinIO 控制台
+      - "9000:9000"   # MinIO S3 API（应用对象存储 + Milvus 段存储共用）
+    volumes:
+      - ./volumes/minio:/minio_data
+    command: minio server /minio_data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  standalone:
+    container_name: milvus-standalone
+    image: milvusdb/milvus:v2.5.5
+    command: ["milvus", "run", "standalone"]
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+    volumes:
+      - ./volumes/milvus:/var/lib/milvus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      start_period: 90s
+      timeout: 20s
+      retries: 3
+    ports:
+      - "19530:19530"   # Milvus gRPC
+      - "9091:9091"     # Milvus 健康检查/指标
+    depends_on:
+      - etcd
+      - minio
+
+  mongo:
+    container_name: kb-mongo
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./volumes/mongo:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
