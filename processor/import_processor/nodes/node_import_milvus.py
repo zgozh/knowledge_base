@@ -209,6 +209,9 @@ class NodeImportMilvus(BaseNode):
             data=chunks_json_data
         )
 
+        # 2.1 刷新：使刚插入的数据立即可被检索（Milvus 写入存在一致性延迟）
+        client.flush(collection_name=milvus_config.chunks_collection)
+
         # 3. 回填chunk_id
         inserted_ids = result.get("ids")
         for idx, item in enumerate(chunks_json_data):
