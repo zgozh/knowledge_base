@@ -1,4 +1,4 @@
-# 掌柜智库 · 外部依赖编排（应用本体仍在宿主机运行）
+# DocMind · 外部依赖编排（应用本体仍在宿主机运行）
 #
 # 一键启动：docker compose up -d
 # 停止（保留数据）：docker compose stop
